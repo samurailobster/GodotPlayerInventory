@@ -161,6 +161,7 @@ align = 1
 
 [node name="WindowDialog_AddItemWindow" type="WindowDialog" parent="Panel" index="4"]
 
+editor/display_folded = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
@@ -179,6 +180,7 @@ size_flags_vertical = 1
 popup_exclusive = false
 window_title = "Add Item"
 resizable = false
+_sections_unfolded = [ "Rect" ]
 
 [node name="AddItemWindow_Label_ItemID" type="Label" parent="Panel/WindowDialog_AddItemWindow" index="1"]
 
@@ -254,6 +256,7 @@ group = null
 text = "Add"
 flat = false
 align = 1
+_sections_unfolded = [ "Rect" ]
 
 [node name="AddItemWindow_Button_Close" type="Button" parent="Panel/WindowDialog_AddItemWindow" index="4"]
 
@@ -279,8 +282,133 @@ group = null
 text = "Close"
 flat = false
 align = 1
+_sections_unfolded = [ "Rect" ]
 
-[node name="WindowDialog_ItemMenu" type="WindowDialog" parent="Panel" index="5"]
+[node name="WindowDialog_SplitItemWindow" type="WindowDialog" parent="Panel" index="5"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 240.0
+margin_top = 160.0
+margin_right = 610.0
+margin_bottom = 300.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+popup_exclusive = false
+window_title = "Split Item"
+resizable = false
+_sections_unfolded = [ "Rect" ]
+
+[node name="SplitItemWindow_Button_Split" type="Button" parent="Panel/WindowDialog_SplitItemWindow" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 80.0
+margin_top = 90.0
+margin_right = 180.0
+margin_bottom = 120.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Split"
+flat = false
+align = 1
+_sections_unfolded = [ "Rect" ]
+
+[node name="SplitItemWindow_Button_Cancel" type="Button" parent="Panel/WindowDialog_SplitItemWindow" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 200.0
+margin_top = 90.0
+margin_right = 300.0
+margin_bottom = 120.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Cancel"
+flat = false
+align = 1
+_sections_unfolded = [ "Rect" ]
+
+[node name="SplitItemWindow_HSlider_Amount" type="HSlider" parent="Panel/WindowDialog_SplitItemWindow" index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 80.0
+margin_top = 30.0
+margin_right = 300.0
+margin_bottom = 46.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 0
+min_value = 1.0
+max_value = 100.0
+step = 1.0
+page = 0.0
+value = 1.0
+exp_edit = false
+rounded = false
+editable = true
+tick_count = 1
+ticks_on_borders = true
+focus_mode = 2
+
+[node name="SplitItemWindow_Label_Amount" type="Label" parent="Panel/WindowDialog_SplitItemWindow" index="4"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 80.0
+margin_top = 60.0
+margin_right = 300.0
+margin_bottom = 74.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 4
+text = "1"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="WindowDialog_ItemMenu" type="WindowDialog" parent="Panel" index="6"]
 
 editor/display_folded = true
 visible = false
@@ -388,6 +516,12 @@ align = 1
 [connection signal="pressed" from="Panel/WindowDialog_AddItemWindow/AddItemWindow_Button_AddItem" to="." method="_on_AddItemWindow_Button_AddItem_pressed"]
 
 [connection signal="pressed" from="Panel/WindowDialog_AddItemWindow/AddItemWindow_Button_Close" to="." method="_on_AddItemWindow_Button_Close_pressed"]
+
+[connection signal="pressed" from="Panel/WindowDialog_SplitItemWindow/SplitItemWindow_Button_Split" to="." method="_on_SplitItemWindow_Button_Split_pressed"]
+
+[connection signal="pressed" from="Panel/WindowDialog_SplitItemWindow/SplitItemWindow_Button_Cancel" to="." method="_on_SplitItemWindow_Button_Cancel_pressed"]
+
+[connection signal="value_changed" from="Panel/WindowDialog_SplitItemWindow/SplitItemWindow_HSlider_Amount" to="." method="_on_SplitItemWindow_HSlider_Amount_value_changed"]
 
 [connection signal="pressed" from="Panel/WindowDialog_ItemMenu/ItemMenu_Button_DropItem" to="." method="_on_ItemMenu_Button_DropItem_pressed"]
 

@@ -16,6 +16,11 @@ onready var itemMenu_Button_DropItem = get_node("Panel/WindowDialog_ItemMenu/Ite
 var activeItemSlot = -1
 var dropItemSlot = -1
 
+# WindowDialog_SplitItemWindow Variables.
+onready var splitItemWindow = get_node("Panel/WindowDialog_SplitItemWindow")
+onready var SplitItemWindow_HSlider_Amount = get_node("Panel/WindowDialog_SplitItemWindow/SplitItemWindow_HSlider_Amount")
+onready var SplitItemWindow_Label_Amount = get_node("Panel/WindowDialog_SplitItemWindow/SplitItemWindow_Label_Amount")
+
 onready var isDraggingItem = false
 var draggedItemTexture
 onready var draggedItem = get_node("Panel/Sprite_DraggedItem")
@@ -23,6 +28,9 @@ onready var mouseButtonReleased = true
 var draggedItemSlot = -1
 onready var initial_mousePos = Vector2()
 onready var cursor_insideItemList = false
+
+var isAwaitingSplit = false
+var splitItemSlot = -1
 
 func _ready():
 	# Initialize Item List
@@ -44,14 +52,25 @@ func _process(delta):
 
 
 func _input(event):
+	
+	if (!isDraggingItem):
+		if event.is_action_pressed("key_shift"):
+			isAwaitingSplit = true
+		if event.is_action_released("key_shift"):
+			isAwaitingSplit = false
+	
 	if (event is InputEventMouseButton):
-		if (event.is_action_pressed("mouse_leftbtn")):
-			mouseButtonReleased = false
-			initial_mousePos = get_viewport().get_mouse_position()
-		if (event.is_action_released("mouse_leftbtn")):
-			move_item()
-			end_drag_item()
-			
+		if (!isAwaitingSplit):
+			if (event.is_action_pressed("mouse_leftbtn")):
+				mouseButtonReleased = false
+				initial_mousePos = get_viewport().get_mouse_position()
+			if (event.is_action_released("mouse_leftbtn")):
+				move_item()
+				end_drag_item()
+		else:
+			if (event.is_action_pressed("mouse_rightbtn")):
+				if (activeItemSlot >= 0):
+					begin_split_item()
 	if (event is InputEventMouseMotion):
 		if (cursor_insideItemList):
 			activeItemSlot = itemList.get_item_at_position(itemList.get_local_mouse_position(),true)
@@ -65,7 +84,7 @@ func _input(event):
 					begin_drag_item(activeItemSlot)
 		else:
 			activeItemSlot = -1
-
+	
 
 func load_items():
 	itemList.clear()
@@ -75,6 +94,8 @@ func load_items():
 
 
 func update_slot(slot):
+	if (slot < 0): 
+		return
 	var inventoryItem = Global_Player.inventory[String(slot)]
 	var itemMetaData = Global_ItemDatabase.get_item(inventoryItem["id"])
 	var icon = ResourceLoader.load(itemMetaData["icon"])
@@ -106,6 +127,8 @@ func _on_AddItemWindow_Button_AddItem_pressed():
 
 func _on_ItemList_item_rmb_selected(index, atpos):
 	if (isDraggingItem):
+		return
+	if (isAwaitingSplit):
 		return
 	
 	dropItemSlot = index
@@ -142,6 +165,26 @@ func _on_ItemMenu_Button_DropItem_pressed():
 
 func _on_Button_Save_pressed():
 	Global_Player.save_data()
+
+func begin_split_item():
+	if activeItemSlot < 0:
+		return
+	splitItemSlot = activeItemSlot
+	var itemMetaData = itemList.get_item_metadata(splitItemSlot)
+	var availableAmount = int(itemMetaData["amount"])
+	if (availableAmount > 1):
+		SplitItemWindow_HSlider_Amount.min_value = 1
+		SplitItemWindow_HSlider_Amount.max_value = availableAmount -1
+		SplitItemWindow_HSlider_Amount.value = 1
+		splitItemWindow.popup()
+
+
+func _on_SplitItemWindow_Button_Split_pressed():
+	update_slot(Global_Player.inventory_splitItem(splitItemSlot, int(SplitItemWindow_HSlider_Amount.value)))
+	update_slot(splitItemSlot)
+	splitItemSlot = -1
+	splitItemWindow.hide()
+	pass
 
 
 func begin_drag_item(index):
@@ -190,5 +233,12 @@ func _on_ItemList_mouse_entered():
 
 func _on_ItemList_mouse_exited():
 	cursor_insideItemList = false;
+
+func _on_SplitItemWindow_Button_Cancel_pressed():
+	splitItemWindow.hide()
+
+
+func _on_SplitItemWindow_HSlider_Amount_value_changed(value):
+	SplitItemWindow_Label_Amount.text = String(value)
 
 
