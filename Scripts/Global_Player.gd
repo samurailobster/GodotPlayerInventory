@@ -98,14 +98,17 @@ func inventory_mergeItem(fromSlot, toSlot):
 	var toSlot_invData = inventory[String(toSlot)]
 	
 	var toSlot_stackLimit = int(Global_ItemDatabase.get_item(inventory[String(toSlot)]["id"])["stack_limit"])
+	var fromSlot_stackLimit = int(Global_ItemDatabase.get_item(inventory[String(fromSlot)]["id"])["stack_limit"])
+	
+	if (toSlot_stackLimit <= 1 or fromSlot_stackLimit <=1):
+		return
 	
 	#var toSlot_stackLimit = int(Global_ItemDatabase.get_item(inventory[toSlot]["id"])["stack_limit"])
 	
 	if (fromSlot_invData["id"] != toSlot_invData["id"]):
 		return
-	if (int(toSlot_invData["amount"]) >= toSlot_stackLimit):
-		return
-	if (int(fromSlot_invData["amount"] >= toSlot_stackLimit)):
+	if (int(toSlot_invData["amount"]) >= toSlot_stackLimit or int(fromSlot_invData["amount"] >= toSlot_stackLimit)):
+		inventory_moveItem(fromSlot, toSlot)
 		return
 	
 	var toSlot_newAmount = int(toSlot_invData["amount"]) + int(fromSlot_invData["amount"])
