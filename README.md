@@ -2,6 +2,8 @@
 
 ### New Feature
   - Item Drag and drop.
+  - Split (Right click a stacked item while holding shift key to split.)
+  - Merge
 
 |  | Links |
 | ------ | ------ |
