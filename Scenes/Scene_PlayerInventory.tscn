@@ -286,6 +286,7 @@ _sections_unfolded = [ "Rect" ]
 
 [node name="WindowDialog_SplitItemWindow" type="WindowDialog" parent="Panel" index="5"]
 
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0

@@ -37,6 +37,8 @@ func inventory_getEmptySlot():
 	return -1
 
 func inventory_splitItem(slot, split_amount):
+	if (split_amount <= 0):
+		return -1
 	var emptySlot = inventory_getEmptySlot()
 	if emptySlot < 0:
 		return emptySlot
@@ -74,11 +76,50 @@ func inventory_addItem(itemId):
 func inventory_removeItem(slot):
 	var newAmount = inventory[String(slot)]["amount"] - 1
 	if (newAmount < 1):
-		inventory[String(slot)] = {"id": "0", "amount": 0}
+		inventory_updateItem(slot, 0, 0)
 		return 0
 	inventory[String(slot)]["amount"] = newAmount
 	return newAmount
 
+func inventory_updateItem(slot, new_id, new_amount):
+	if (slot < 0):
+		return
+	if (new_amount < 0):
+		return
+	if (Global_ItemDatabase.get_item(new_id) == null):
+		return
+	inventory[String(slot)] = {"id": String(new_id), "amount": int(new_amount)}
+	
+func inventory_mergeItem(fromSlot, toSlot):
+	if (fromSlot < 0 or toSlot < 0):
+		return
+	
+	var fromSlot_invData = inventory[String(fromSlot)]
+	var toSlot_invData = inventory[String(toSlot)]
+	
+	var toSlot_stackLimit = int(Global_ItemDatabase.get_item(inventory[String(toSlot)]["id"])["stack_limit"])
+	
+	#var toSlot_stackLimit = int(Global_ItemDatabase.get_item(inventory[toSlot]["id"])["stack_limit"])
+	
+	if (fromSlot_invData["id"] != toSlot_invData["id"]):
+		return
+	if (int(toSlot_invData["amount"]) >= toSlot_stackLimit):
+		return
+	if (int(fromSlot_invData["amount"] >= toSlot_stackLimit)):
+		return
+	
+	var toSlot_newAmount = int(toSlot_invData["amount"]) + int(fromSlot_invData["amount"])
+	var fromSlot_newAmount = 0
+	if (toSlot_newAmount > toSlot_stackLimit):
+		fromSlot_newAmount = toSlot_newAmount - toSlot_stackLimit
+		#inventory_updateItem(toSlot, String(inventory[["id"]]), toSlot_stackLimit)
+		inventory_updateItem(toSlot, inventory[String(toSlot)]["id"], toSlot_stackLimit)
+		inventory_updateItem(fromSlot, inventory[String(fromSlot)]["id"], fromSlot_newAmount)
+	else:
+		inventory_updateItem(toSlot, inventory[String(toSlot)]["id"], toSlot_newAmount)
+		inventory_updateItem(fromSlot, 0, 0)
+		#inventory_removeItem(fromSlot)
+		
 
 func inventory_moveItem(fromSlot, toSlot):
 	var temp_ToSlotItem = inventory[String(toSlot)]

@@ -65,7 +65,7 @@ func _input(event):
 				mouseButtonReleased = false
 				initial_mousePos = get_viewport().get_mouse_position()
 			if (event.is_action_released("mouse_leftbtn")):
-				move_item()
+				move_merge_item()
 				end_drag_item()
 		else:
 			if (event.is_action_pressed("mouse_rightbtn")):
@@ -216,17 +216,32 @@ func end_drag_item():
 	return
 
 
-func move_item():
+func move_merge_item():
 	if (draggedItemSlot < 0): 
 		return
-	if (activeItemSlot == draggedItemSlot or activeItemSlot < 0):
+	if (activeItemSlot < 0):
 		update_slot(draggedItemSlot)
 		return
-	Global_Player.inventory_moveItem(draggedItemSlot, activeItemSlot)
-	update_slot(draggedItemSlot)
-	update_slot(activeItemSlot)
-
-
+		
+	if (activeItemSlot == draggedItemSlot):
+		update_slot(draggedItemSlot)
+	else:
+		if (itemList.get_item_metadata(activeItemSlot)["id"] == itemList.get_item_metadata(draggedItemSlot)["id"]):
+			var itemData = itemList.get_item_metadata(activeItemSlot)
+			if (int(itemData["stack_limit"]) >= 2):
+				Global_Player.inventory_mergeItem(draggedItemSlot, activeItemSlot)
+				update_slot(draggedItemSlot)
+				update_slot(activeItemSlot)
+				return
+			else:
+				update_slot(draggedItem)
+				return
+		else:
+			Global_Player.inventory_moveItem(draggedItemSlot, activeItemSlot)
+			update_slot(draggedItemSlot)
+			update_slot(activeItemSlot)
+			
+			
 func _on_ItemList_mouse_entered():
 	cursor_insideItemList = true;
 
